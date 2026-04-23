@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Voces Entre Páginas | Red Literaria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <style>
+        /* ==========================================================================
+           VARIABLES Y DISEÑO MODERNO MINIMALISTA (Estilo Notion/Apple)
+           ========================================================================== */
+        :root {
+            /* Paleta sofisticada y juvenil (Indigo/Slate) */
+            --primary: #4f46e5;       /* Indigo moderno */
+            --primary-hover: #4338ca;
+            --bg-color: #f8fafc;      /* Fondo muy suave */
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --accent-light: #e0e7ff;
+            --accent-text: #3730a3;
+            --danger: #ef4444; 
+            --success: #10b981; 
+            --warning: #f59e0b;
+            
+            --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-serif: 'Playfair Display', serif;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            --radius-md: 12px;
+            --radius-lg: 20px;
+        }
+
+        /* Temas Dinámicos */
+        body.dark-mode { 
+            --bg-color: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; 
+            --border: #334155; --accent-light: #312e81; --accent-text: #c7d2fe;
+        }
+        body.paper-mode { 
+            --bg-color: #f4ecd8; --card-bg: #fdf5e6; --text-main: #432818; --text-muted: #7f5539;
+            --border: #e6ccb2; --accent-light: #ede0d4; --accent-text: #582f0e;
+        }
+
+        /* Modo Zen */
+        body.zen-mode .glass-nav, body.zen-mode .no-zen, body.zen-mode .controls { display: none !important; }
+
+        /* Estilos Base */
+        * { box-sizing: border-box; }
+        body { 
+            font-family: var(--font-ui); background-color: var(--bg-color); color: var(--text-main); 
+            margin: 0; padding: 0; line-height: 1.6; transition: background-color 0.3s ease, color 0.3s ease; 
+            padding-bottom: 100px; -webkit-font-smoothing: antialiased;
+        }
+        
+        h1, h2, h3 { color: var(--text-main); font-weight: 800; letter-spacing: -0.02em; }
+        .serif-title { font-family: var(--font-serif); font-weight: 600; font-style: italic; }
+
+        /* Barra de Progreso Superior */
+        .progress-container { position: fixed; top: 0; left: 0; z-index: 9999; width: 100%; height: 4px; background: transparent; }
+        .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.1s; }
+
+        /* Navegación Glassmorphism */
+        .glass-nav {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(var(--card-bg), 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border); padding: 1rem 0;
+        }
+        .nav-container {
+            max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo { font-size: 1.4rem; font-weight: 800; color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .nav-links { display: flex; gap: 20px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+        .nav-links::-webkit-scrollbar { display: none; }
+        .nav-links a { 
+            color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 600; 
+            padding: 6px 12px; border-radius: 8px; transition: all 0.2s ease; 
+        }
+        .nav-links a:hover { color: var(--primary); background: var(--accent-light); }
+
+        /* Contenedores y Bento Grid */
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 20px; }
+        .section-title { font-size: 1.8rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        
+        .bento-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 3rem; }
+        
+        .card { 
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-lg); 
+            padding: 24px; box-shadow: var(--shadow-sm); transition: transform 0.2s, box-shadow 0.2s; 
+            display: flex; flex-direction: column;
+        }
+        .card:hover { box-shadow: var(--shadow-md); }
+        .card h3 { margin-top: 0; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px; }
+
+        /* Elementos UI Específicos */
+        .progress-track { background: var(--border); height: 8px; border-radius: 4px; overflow: hidden; margin: 15px 0; }
+        .progress-fill { background: var(--primary); height: 100%; width: 0%; transition: 1s ease-out; }
+        
+        .level-badge { display: inline-block; background: var(--accent-light); color: var(--accent-text); padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; }
+
+        /* Formularios y Botones Minimalistas */
+        .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        .flex-row { display: flex; gap: 10px; }
+        
+        input, select, textarea { 
+            width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border); 
+            background: var(--bg-color); color: var(--text-main); font-family: var(--font-ui); font-size: 0.95rem; 
+            outline: none; transition: border-color 0.2s; 
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); }
+        
+        button { 
+            background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: var(--radius-md); 
+            font-weight: 600; font-family: var(--font-ui); font-size: 0.95rem; cursor: pointer; transition: all 0.2s; 
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px; 
+        }
+        button:hover { background: var(--primary-hover); }
+        button.outline { background: transparent; color: var(--text-main); border: 1px solid var(--border); }
+        button.outline:hover { background: var(--bg-color); }
+
+        /* Listas limpias */
+        .clean-list { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; }
+        .clean-list li { 
+            padding: 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; 
+        }
+        .clean-list li:last-child { border-bottom: none; }
+        .clean-list li.late { border-left: 3px solid var(--danger); background: rgba(239, 68, 68, 0.05); }
+
+        /* Librería Elegante */
+        .library-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 24px; perspective: 1000px; }
+        .book-card { 
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-md); 
+            padding: 12px; transition: all 0.4s ease; transform-style: preserve-3d; display: flex; flex-direction: column;
+        }
+        .book-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+        
+        .book-3d { transform: rotateY(-20deg) scale(0.95); box-shadow: -10px 10px 20px rgba(0,0,0,0.1); border-left: 8px solid var(--border); }
+        .book-3d:hover { transform: rotateY(0deg) scale(1.05); }
+        
+        .book-cover { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 8px; margin-bottom: 12px; background: var(--border); }
+        .book-title { font-size: 1rem; font-weight: 600; margin: 0 0 8px 0; line-height: 1.3; }
+        .tags-wrapper { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; margin-top: auto; }
+        .tag { background: var(--accent-light); color: var(--accent-text); padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Gráficos y UI Extras */
+        .stat-value { font-size: 2.5rem; font-weight: 800; color: var(--text-main); line-height: 1; margin: 10px 0; }
+        
+        .chart-container { display: flex; height: 24px; border-radius: 12px; overflow: hidden; margin: 15px 0; }
+        .chart-bar { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: white; font-weight: bold; overflow: hidden; transition: width 1s; }
+
+        /* Chat Simulado Moderno */
+        .chat-container { background: var(--bg-color); border: 1px solid var(--border); border-radius: var(--radius-md); height: 150px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+        .msg { max-width: 80%; padding: 8px 12px; border-radius: 12px; font-size: 0.9rem; line-height: 1.4; }
+        .msg.sys { align-self: center; background: transparent; color: var(--text-muted); font-size: 0.8rem; }
+        .msg.me { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 2px; }
+        .msg.other { align-self: flex-start; background: var(--card-bg); border: 1px solid var(--border); border-bottom-left-radius: 2px; }
+
+        /* Controles Flotantes y Modales */
+        .controls { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 1500; }
+        .fab { 
+            width: 48px; height: 48px; border-radius: 24px; border: 1px solid var(--border); background: var(--card-bg); 
+            color: var(--text-main); cursor: pointer; font-size: 1.2rem; box-shadow: var(--shadow-md); 
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s; 
+        }
+        .fab:hover { transform: scale(1.1); box-shadow: var(--shadow-lg); }
+        
+        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(15, 23, 42, 0.6); z-index: 1999; backdrop-filter: blur(4px); }
+        .modal { 
+            display: none; position: fixed; top:50%; left:50%; transform:translate(-50%, -50%); background: var(--card-bg); 
+            padding: 30px; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); z-index: 2000; 
+            width: 90%; max-width: 400px; text-align: center; border: 1px solid var(--border);
+        }
+
+        /* Utilidades */
+        .text-center { text-align: center; }
+        .w-full { width: 100%; }
+        .mt-4 { margin-top: 1rem; }
+        .mb-4 { margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+
+<div class="progress-container"><div class="progress-bar" id="myBar"></div></div>
+
+<nav class="glass-nav">
+    <div class="nav-container">
+        <a href="#" class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+            Voces
+        </a>
+        <div class="nav-links">
+            <a href="#dashboard">Mi Espacio</a>
+            <a href="#stats">Estadísticas</a>
+            <a href="#tools">Herramientas</a>
+            <a href="#library">Librería</a>
+            <a href="#community">Comunidad</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    
+    <header style="padding: 40px 0 60px 0; text-align: center;">
+        <h1 style="font-size: 3rem; margin: 0 0 10px 0;">Tu ecosistema <span class="serif-title" style="color: var(--primary);">literario</span></h1>
+        <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 500px; margin: 0 auto;">Organiza, analiza y comparte tus lecturas en un espacio diseñado para mentes curiosas.</p>
+    </header>
+
+    <section id="dashboard">
+        <h2 class="section-title"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> Mi Espacio</h2>
+        
+        <div class="bento-grid">
+            <div class="card">
+                <h3>Trayectoria</h3>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div>
+                        <span class="level-badge" id="userLevelTitle">Aprendiz</span>
+                        <div class="stat-value"><span id="xp-count">0</span><span style="font-size:1rem; color:var(--text-muted);">/500 XP</span></div>
+                    </div>
+                    <div class="text-center" style="padding: 10px; background: var(--bg-color); border-radius: 12px; width: 80px;">
+                        <span id="tree-visual" style="font-size: 2rem; display: block;">🌱</span>
+                        <span style="font-size: 0.7rem; font-weight:bold; color:var(--text-muted);">Árbol</span>
+                    </div>
+                </div>
+                <div class="progress-track"><div class="progress-fill" id="xp-bar"></div></div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top:10px;">
+                    <span style="font-weight: 600;">Libros Leídos: <span id="leidos-count" style="color: var(--primary);">0</span></span>
+                    <button class="outline" style="padding: 6px 12px; border-radius: 20px; font-size:0.8rem;" onclick="cambiarLeidos(1)">+ Registrar Libro</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="justify-content: space-between;">
+                    Bloc de Notas
+                    <div style="display: flex; gap: 8px;">
+                        <button class="outline" onclick="exportNotas()" title="Descargar" style="padding:4px 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+                        <button class="outline" onclick="leerNotas()" title="Escuchar" style="padding:4px 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
+                    </div>
+                </h3>
+                <textarea id="texto-notas" placeholder="Escribe tus reflexiones, citas o ideas aquí..." style="flex-grow: 1; min-height: 120px; border:none; background:var(--bg-color); resize:none;" onkeyup="guardarNotas()"></textarea>
+            </div>
+
+            <div class="card">
+                <h3>Gestor de Préstamos</h3>
+                <div class="flex-row mb-4">
+                    <input type="text" id="loanBook" placeholder="Libro" style="flex:2;">
+                    <input type="text" id="loanPerson" placeholder="A quién" style="flex:2;">
+                    <input type="number" id="loanDays" placeholder="Días" min="1" max="30" style="flex:1;">
+                    <button onclick="addLoan()" style="padding: 12px;">+</button>
+                </div>
+                <ul class="clean-list" id="loanList"></ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="stats" class="no-zen">
+        <h2 class="section-title"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg> Analíticas</h2>
+        
+        <div class="bento-grid">
+            <div class="card text-center">
+                <h3>Constancia Diaria</h3>
+                <div class="stat-value" id="streakCount" style="color: var(--danger);">0</div>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Días consecutivos leyendo. La consistencia es la clave.</p>
+                <button class="w-full mt-4" onclick="checkInDiario()" id="btnCheckin">Registrar Lectura de Hoy</button>
+            </div>
+
+            <div class="card">
+                <h3>Distribución de Géneros</h3>
+                <div class="chart-container" id="genreChart"></div>
+                <div id="genreLegend" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:15px; font-size:0.85rem; font-weight:600; color:var(--text-muted);"></div>
+            </div>
+
+            <div class="card">
+                <h3>Glosario de Personajes</h3>
+                <div class="flex-row mb-4">
+                    <input type="text" id="charName" placeholder="Nombre" style="flex:1;">
+                    <input type="text" id="charDesc" placeholder="Descripción breve" style="flex:2;">
+                    <button onclick="addChar()">+</button>
+                </div>
+                <ul class="clean-list" id="charList"></ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="tools" class="no-zen">
+        <h2 class="section-title"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Herramientas Pro</h2>
+        
+        <div class="bento-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+            <div class="card text-center">
+                <h3>Sprint de Lectura (15m)</h3>
+                <div id="sprintTime" style="font-size:3rem; font-weight:800; font-variant-numeric: tabular-nums; margin: 15px 0;">15:00</div>
+                <button class="w-full" id="btnSprint" onclick="toggleSprint()">Iniciar Reto</button>
+            </div>
+            
+            <div class="card">
+                <h3>Proyección de Tiempo</h3>
+                <div class="input-group">
+                    <input type="number" id="calcPages" placeholder="Páginas restantes">
+                    <input type="number" id="calcPPM" placeholder="Palabras por minuto (ej. 250)">
+                </div>
+                <button class="w-full mb-4" onclick="calcularTiempo()">Calcular Tiempo</button>
+                <div id="calcResult" style="font-weight:600; text-align:center; color:var(--primary); font-size:0.95rem;"></div>
+            </div>
+
+            <div class="card text-center">
+                <h3>Inspiración Aleatoria</h3>
+                <p id="quoteBox" class="serif-title" style="min-height:80px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:1.1rem;">
+                    "Presiona el botón para descubrir una cita."
+                </p>
+                <button class="outline w-full" onclick="generarCita()">Generar Cita</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="library">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 15px; margin-bottom: 24px;">
+            <h2 class="section-title" style="margin: 0;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> El Archivo</h2>
+            
+            <div class="flex-row">
+                <button class="outline" onclick="toggle3D()" title="Vista 3D"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/></svg></button>
+                <button class="outline" onclick="addByISBN()" title="Escanear ISBN"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5v14M8 5v14M12 5v14M16 5v14M20 5v14"/></svg></button>
+                <button onclick="citaCiega()">Cita a Ciegas</button>
+            </div>
+        </div>
+        
+        <input type="text" id="bookSearch" placeholder="Buscar en el archivo por título, autor o etiqueta..." onkeyup="searchBooks()" style="margin-bottom: 30px; background: var(--card-bg);">
+        
+        <div class="library-grid" id="bookGrid">
+            
+            <div class="book-card" data-title="el príncipe de la niebla carlos ruiz zafón misterio" data-tags="misterio,juvenil">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Niebla" class="book-cover">
+                <h3 class="book-title">El Príncipe de la Niebla</h3>
+                <div class="tags-wrapper"><span class="tag">Misterio</span><span class="tag">Juvenil</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('misterio')">Leer Ahora</button>
+            </div>
+            
+            <div class="book-card" data-title="it stephen king terror" data-tags="terror,clasico">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=IT" class="book-cover">
+                <h3 class="book-title">IT (Eso)</h3>
+                <div class="tags-wrapper"><span class="tag">Terror</span><span class="tag">Clásico</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('terror')">Leer Ahora</button>
+            </div>
+            
+            <div class="book-card" data-title="dune frank herbert scifi" data-tags="scifi,epica">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=DUNE" class="book-cover">
+                <h3 class="book-title">Dune</h3>
+                <div class="tags-wrapper"><span class="tag">Sci-Fi</span><span class="tag">Épica</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('scifi')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="1984 george orwell distopia clasico" data-tags="distopia,clasico">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=1984" class="book-cover">
+                <h3 class="book-title">1984</h3>
+                <div class="tags-wrapper"><span class="tag">Distopía</span><span class="tag">Clásico</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('scifi')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="fahrenheit 451 ray bradbury distopia" data-tags="distopia,scifi">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Fahrenheit+451" class="book-cover">
+                <h3 class="book-title">Fahrenheit 451</h3>
+                <div class="tags-wrapper"><span class="tag">Distopía</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('scifi')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="un mundo feliz aldous huxley distopia" data-tags="distopia,clasico">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Un+Mundo+Feliz" class="book-cover">
+                <h3 class="book-title">Un Mundo Feliz</h3>
+                <div class="tags-wrapper"><span class="tag">Distopía</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('scifi')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="dracula bram stoker terror clasico" data-tags="terror,clasico">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Dracula" class="book-cover">
+                <h3 class="book-title">Drácula</h3>
+                <div class="tags-wrapper"><span class="tag">Terror</span><span class="tag">Clásico</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('terror')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="frankenstein mary shelley terror scifi" data-tags="terror,scifi">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Frankenstein" class="book-cover">
+                <h3 class="book-title">Frankenstein</h3>
+                <div class="tags-wrapper"><span class="tag">Terror</span><span class="tag">Clásico</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('terror')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="el resplandor stephen king terror" data-tags="terror">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=El+Resplandor" class="book-cover">
+                <h3 class="book-title">El Resplandor</h3>
+                <div class="tags-wrapper"><span class="tag">Terror</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('terror')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="el señor de los anillos jrr tolkien fantasia" data-tags="fantasia,epica">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=ESDLA" class="book-cover">
+                <h3 class="book-title">El Señor de los Anillos</h3>
+                <div class="tags-wrapper"><span class="tag">Fantasía</span><span class="tag">Épica</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('fantasia')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="harry potter j.k. rowling fantasia juvenil" data-tags="fantasia,juvenil">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Harry+Potter" class="book-cover">
+                <h3 class="book-title">Harry Potter</h3>
+                <div class="tags-wrapper"><span class="tag">Fantasía</span><span class="tag">Juvenil</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('fantasia')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="el nombre del viento patrick rothfuss fantasia" data-tags="fantasia">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=El+Nombre+Viento" class="book-cover">
+                <h3 class="book-title">El Nombre del Viento</h3>
+                <div class="tags-wrapper"><span class="tag">Fantasía</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('fantasia')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="juego de tronos george rr martin fantasia" data-tags="fantasia,epica">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Juego+de+Tronos" class="book-cover">
+                <h3 class="book-title">Juego de Tronos</h3>
+                <div class="tags-wrapper"><span class="tag">Fantasía</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('fantasia')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="cien años de soledad gabriel garcia marquez realismo magico" data-tags="realismo,clasico">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=100+Anos" class="book-cover">
+                <h3 class="book-title">Cien años de soledad</h3>
+                <div class="tags-wrapper"><span class="tag">Realismo</span><span class="tag">Clásico</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('fantasia')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="orgullo y prejuicio jane austen romance clasico" data-tags="romance,clasico">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Orgullo" class="book-cover">
+                <h3 class="book-title">Orgullo y Prejuicio</h3>
+                <div class="tags-wrapper"><span class="tag">Romance</span><span class="tag">Clásico</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('romance')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="cumbres borrascosas emily bronte romance" data-tags="romance,clasico">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Cumbres" class="book-cover">
+                <h3 class="book-title">Cumbres Borrascosas</h3>
+                <div class="tags-wrapper"><span class="tag">Romance</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('romance')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="los juegos del hambre suzanne collins distopia juvenil" data-tags="distopia,juvenil">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Juegos+Hambre" class="book-cover">
+                <h3 class="book-title">Los Juegos del Hambre</h3>
+                <div class="tags-wrapper"><span class="tag">Distopía</span><span class="tag">Juvenil</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('scifi')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="heartstopper alice oseman romance grafica" data-tags="romance,grafica">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Heartstopper" class="book-cover">
+                <h3 class="book-title">Heartstopper</h3>
+                <div class="tags-wrapper"><span class="tag">Romance</span><span class="tag">Gráfica</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('romance')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="percy jackson rick riordan fantasia juvenil" data-tags="fantasia,juvenil">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Percy+Jackson" class="book-cover">
+                <h3 class="book-title">Percy Jackson</h3>
+                <div class="tags-wrapper"><span class="tag">Fantasía</span><span class="tag">Juvenil</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('fantasia')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="el hobbit jrr tolkien fantasia aventura" data-tags="fantasia,aventura">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=El+Hobbit" class="book-cover">
+                <h3 class="book-title">El Hobbit</h3>
+                <div class="tags-wrapper"><span class="tag">Fantasía</span><span class="tag">Aventura</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('fantasia')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="la sombra del viento carlos ruiz zafon misterio" data-tags="misterio,ficcion">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Sombra+Viento" class="book-cover">
+                <h3 class="book-title">La Sombra del Viento</h3>
+                <div class="tags-wrapper"><span class="tag">Misterio</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('misterio')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="angeles y demonios dan brown thriller" data-tags="thriller,misterio">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Angeles+Demonios" class="book-cover">
+                <h3 class="book-title">Ángeles y Demonios</h3>
+                <div class="tags-wrapper"><span class="tag">Thriller</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('misterio')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="el codigo da vinci dan brown thriller" data-tags="thriller,misterio">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Da+Vinci" class="book-cover">
+                <h3 class="book-title">El Código Da Vinci</h3>
+                <div class="tags-wrapper"><span class="tag">Thriller</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('misterio')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="diez negritos agatha christie misterio" data-tags="misterio,clasico">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Diez+Negritos" class="book-cover">
+                <h3 class="book-title">Diez Negritos</h3>
+                <div class="tags-wrapper"><span class="tag">Misterio</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('misterio')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="asesinato en el orient express agatha christie misterio" data-tags="misterio">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Orient+Express" class="book-cover">
+                <h3 class="book-title">Asesinato en el Orient Express</h3>
+                <div class="tags-wrapper"><span class="tag">Misterio</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('misterio')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="el alquimista paulo coelho ficcion" data-tags="ficcion,filosofia">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=El+Alquimista" class="book-cover">
+                <h3 class="book-title">El Alquimista</h3>
+                <div class="tags-wrapper"><span class="tag">Ficción</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('fantasia')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="rebelion en la granja george orwell clasico" data-tags="clasico,distopia">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Rebelion" class="book-cover">
+                <h3 class="book-title">Rebelión en la Granja</h3>
+                <div class="tags-wrapper"><span class="tag">Clásico</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('scifi')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="matar a un ruiseñor harper lee clasico" data-tags="clasico,ficcion">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Ruisenor" class="book-cover">
+                <h3 class="book-title">Matar a un Ruiseñor</h3>
+                <div class="tags-wrapper"><span class="tag">Clásico</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('misterio')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="el gran gatsby f. scott fitzgerald clasico" data-tags="clasico,romance">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Gatsby" class="book-cover">
+                <h3 class="book-title">El Gran Gatsby</h3>
+                <div class="tags-wrapper"><span class="tag">Clásico</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('romance')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="cazadores de sombras cassandra clare fantasia juvenil" data-tags="fantasia,juvenil">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Cazadores" class="book-cover">
+                <h3 class="book-title">Cazadores de Sombras</h3>
+                <div class="tags-wrapper"><span class="tag">Fantasía</span><span class="tag">Juvenil</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('fantasia')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="divergente veronica roth distopia juvenil" data-tags="distopia,juvenil">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Divergente" class="book-cover">
+                <h3 class="book-title">Divergente</h3>
+                <div class="tags-wrapper"><span class="tag">Distopía</span><span class="tag">Juvenil</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('scifi')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="maze runner james dashner distopia juvenil" data-tags="distopia,juvenil">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=Maze+Runner" class="book-cover">
+                <h3 class="book-title">Maze Runner</h3>
+                <div class="tags-wrapper"><span class="tag">Distopía</span><span class="tag">Juvenil</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('scifi')">Leer Ahora</button>
+            </div>
+
+            <div class="book-card" data-title="el principito antoine de saint-exupery clasico fantasia" data-tags="clasico,fantasia">
+                <img src="https://placehold.co/300x450/e2e8f0/475569?text=El+Principito" class="book-cover">
+                <h3 class="book-title">El Principito</h3>
+                <div class="tags-wrapper"><span class="tag">Clásico</span><span class="tag">Fantasía</span></div>
+                <button class="outline w-full" style="padding: 8px; font-size: 0.8rem;" onclick="leerLibro('fantasia')">Leer Ahora</button>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="community" class="no-zen">
+        <h2 class="section-title"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Comunidad</h2>
+        
+        <div class="bento-grid">
+            <div class="card">
+                <h3>Curaduría Algorítmica</h3>
+                <p style="color:var(--text-muted); font-size:0.9rem;">Recomendaciones personalizadas basadas en tu biblioteca.</p>
+                <div id="aiRec" style="font-weight:600; font-size:1.1rem; color:var(--primary); margin:15px 0; min-height:40px; display:flex; align-items:center;">Haz clic para analizar tu perfil...</div>
+                <button class="outline w-full" onclick="generarRecomendacion()">Analizar Preferencias</button>
+            </div>
+
+            <div class="card">
+                <h3>Desafíos de Lectura</h3>
+                <div class="input-group">
+                    <input type="text" id="duelFriend" placeholder="Usuario a desafiar (ej. @alex99)">
+                    <input type="text" id="duelBook" placeholder="Libro de la competencia">
+                </div>
+                <button class="w-full mt-4" onclick="iniciarDuelo()" style="background:var(--text-main);">Enviar Desafío</button>
+                <div id="duelStatus" style="margin-top:15px; font-weight:600; color:var(--primary); font-size:0.9rem;"></div>
+            </div>
+
+            <div class="card">
+                <h3>Sala de Debate</h3>
+                <div id="chatBox" class="chat-container">
+                    <div class="msg sys">Te has unido a la sala general.</div>
+                </div>
+                <div class="flex-row">
+                    <input type="text" id="chatMsg" placeholder="Escribe un mensaje..." style="flex:1;">
+                    <button onclick="enviarChat()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<div class="overlay" id="overlay" onclick="closeModals()"></div>
+
+<div class="modal" id="pomoModal">
+    <h3 style="margin: 0 0 15px 0; font-size: 1.5rem;">Sesión de Concentración</h3>
+    <div style="font-size: 4rem; font-weight: 800; font-variant-numeric: tabular-nums; margin-bottom: 20px; color: var(--text-main);" id="pomoTime">25:00</div>
+    <button id="btnPomoStart" onclick="startPomo()" style="width:100%; padding: 15px; font-size: 1.1rem;">Iniciar Sesión</button>
+</div>
+
+<div class="modal" id="themeMenu">
+    <h3 style="margin: 0 0 15px 0;">Apariencia</h3>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+        <button class="outline" onclick="setTheme('default')">Modo Claro (Por defecto)</button>
+        <button style="background: #0f172a;" onclick="setTheme('dark')">Modo Oscuro</button>
+        <button style="background: #f4ecd8; color: #432818; border:1px solid #e6ccb2;" onclick="setTheme('paper')">Modo Sepia</button>
+    </div>
+</div>
+
+<div class="controls">
+    <button class="fab" onclick="document.getElementById('overlay').style.display='block'; document.getElementById('pomoModal').style.display='block';" title="Pomodoro"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></button>
+    <button class="fab" onclick="document.getElementById('overlay').style.display='block'; document.getElementById('themeMenu').style.display='block';" title="Apariencia"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
+    <button class="fab" onclick="toggleZen()" title="Modo Zen"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
+</div>
+
+<audio id="bgPlayer" loop></audio>
+
+<script>
+    // Scroll Progress
+    window.onscroll = () => {
+        let win = document.documentElement;
+        document.getElementById("myBar").style.width = (win.scrollTop / (win.scrollHeight - win.clientHeight) * 100) + "%";
+    };
+
+    // Temas
+    function setTheme(t) {
+        document.body.className = '';
+        if(t !== 'default') document.body.classList.add(t + '-mode');
+        closeModals();
+        localStorage.setItem('userThemePro', t);
+    }
+    window.onload = () => { 
+        let t = localStorage.getItem('userThemePro'); 
+        if(t) setTheme(t);
+        updateChart();
+    };
+
+    // XP y Niveles
+    let xp = parseInt(localStorage.getItem('userXP')) || 0;
+    function addXP(amount) { xp += amount; updateXP(); }
+    function updateXP() {
+        document.getElementById('xp-count').innerText = xp;
+        document.getElementById('xp-bar').style.width = Math.min((xp/500)*100, 100) + "%";
+        let lvl = "Aprendiz"; if(xp>100) lvl="Lector Constante"; if(xp>300) lvl="Bibliotecario"; if(xp>=500) lvl="Erudito";
+        document.getElementById('userLevelTitle').innerText = lvl;
+        localStorage.setItem('userXP', xp);
+    }
+    updateXP();
+
+    // Árbol de Lectura
+    let leidos = parseInt(localStorage.getItem('misLeidos')) || 0;
+    function cambiarLeidos(n) {
+        leidos += n; document.getElementById('leidos-count').innerText = leidos;
+        let t = "🌱"; if(leidos>5) t="🌿"; if(leidos>10) t="🌳"; if(leidos>20) t="🌲"; if(leidos>50) t="🌌";
+        document.getElementById('tree-visual').innerText = t;
+        localStorage.setItem('misLeidos', leidos); if(n>0) addXP(50);
+    }
+    cambiarLeidos(0);
+
+    // Racha Diaria
+    let streak = parseInt(localStorage.getItem('userStreak')) || 0;
+    let lastCheckin = localStorage.getItem('lastCheckin') || '';
+    document.getElementById('streakCount').innerText = streak;
+    function checkInDiario() {
+        let today = new Date().toDateString();
+        if(lastCheckin === today) return alert("El registro de hoy ya ha sido completado.");
+        let yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+        if(lastCheckin === yesterday.toDateString() || streak === 0) { streak++; } else { streak = 1; }
+        document.getElementById('streakCount').innerText = streak;
+        localStorage.setItem('userStreak', streak); localStorage.setItem('lastCheckin', today);
+        addXP(20); alert("Registro exitoso. Racha actualizada.");
+    }
+
+    // Notas
+    const txtNotas = document.getElementById('texto-notas');
+    txtNotas.value = localStorage.getItem('misNotas') || '';
+    function guardarNotas() { localStorage.setItem('misNotas', txtNotas.value); }
+    function leerNotas() { window.speechSynthesis.cancel(); let s = new SpeechSynthesisUtterance(txtNotas.value); s.lang='es-ES'; window.speechSynthesis.speak(s); }
+    function exportNotas() {
+        if(!txtNotas.value) return;
+        const blob = new Blob([txtNotas.value], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'Notas_Voces.txt';
+        a.click(); URL.revokeObjectURL(url);
+    }
+
+    // Préstamos
+    let loans = JSON.parse(localStorage.getItem('misLoans')) || [];
+    function renderLoans() {
+        let h = ''; let now = new Date().getTime();
+        loans.forEach((L, i) => {
+            let isLate = now > L.due;
+            h += `<li class="${isLate?'late':''}">
+                <div><strong style="color:var(--text-main);">${L.b}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">A: ${L.p} | ${isLate?'Vencido':'En plazo'}</span></div>
+                <button class="outline" style="padding:4px 8px; border-color:var(--danger); color:var(--danger);" onclick="removeLoan(${i})">✕</button>
+            </li>`;
+        });
+        document.getElementById('loanList').innerHTML = h;
+    }
+    function addLoan() {
+        let b = document.getElementById('loanBook').value; let p = document.getElementById('loanPerson').value; let d = parseInt(document.getElementById('loanDays').value);
+        if(b && p && d) { 
+            loans.push({b, p, due: new Date().getTime() + (d*86400000)}); 
+            localStorage.setItem('misLoans', JSON.stringify(loans)); renderLoans(); 
+            document.getElementById('loanBook').value=''; document.getElementById('loanPerson').value='';
+        }
+    }
+    function removeLoan(i) { loans.splice(i, 1); localStorage.setItem('misLoans', JSON.stringify(loans)); renderLoans(); }
+    renderLoans();
+
+    // Personajes
+    let chars = JSON.parse(localStorage.getItem('misChars')) || [];
+    function renderChars() {
+        let h = ''; chars.forEach((c, i) => h += `<li><div><strong style="color:var(--primary);">${c.n}</strong>: <span style="color:var(--text-muted);">${c.d}</span></div> <button class="outline" style="border:none; padding:4px;" onclick="removeChar(${i})">✕</button></li>`);
+        document.getElementById('charList').innerHTML = h;
+    }
+    function addChar() {
+        let n = document.getElementById('charName').value; let d = document.getElementById('charDesc').value;
+        if(n&&d) { chars.push({n,d}); localStorage.setItem('misChars', JSON.stringify(chars)); renderChars(); document.getElementById('charName').value=''; document.getElementById('charDesc').value='';}
+    }
+    function removeChar(i) { chars.splice(i, 1); localStorage.setItem('misChars', JSON.stringify(chars)); renderChars(); }
+    renderChars();
+
+    // Sprint
+    let sTime = 900; let sInt; let sRun = false;
+    function toggleSprint() {
+        let btn = document.getElementById('btnSprint');
+        if(sRun) { clearInterval(sInt); sRun=false; btn.innerText="Reanudar Reto"; btn.classList.add('outline'); return; }
+        sRun = true; btn.innerText="Pausar"; btn.classList.remove('outline');
+        sInt = setInterval(() => {
+            if(sTime>0) { sTime--; let m=Math.floor(sTime/60); let s=sTime%60; document.getElementById('sprintTime').innerText=`${m<10?'0'+m:m}:${s<10?'0'+s:s}`; }
+            else { clearInterval(sInt); sRun=false; alert("Sprint completado. Registra tu progreso."); sTime=900; addXP(30); btn.innerText="Iniciar Reto"; document.getElementById('sprintTime').innerText="15:00"; }
+        }, 1000);
+    }
+
+    // Calculadora
+    function calcularTiempo() {
+        let p = document.getElementById('calcPages').value; let ppm = document.getElementById('calcPPM').value;
+        if(p && ppm) {
+            let min = (p * 250) / ppm;
+            let hrs = Math.floor(min/60); let m = Math.round(min%60);
+            document.getElementById('calcResult').innerText = `Tiempo estimado: ${hrs}h ${m}m`;
+        }
+    }
+
+    // Citas
+    const citas = ["«El que lee mucho y anda mucho, ve mucho y sabe mucho.» - Cervantes", "«Un lector vive mil vidas antes de morir.» - George R.R. Martin", "«No hay amigo tan leal como un libro.» - Hemingway", "«La lectura es a la mente lo que el ejercicio al cuerpo.» - Addison"];
+    function generarCita() { document.getElementById('quoteBox').innerText = citas[Math.floor(Math.random()*citas.length)]; addXP(1); }
+
+    // Librería
+    function searchBooks() {
+        let q = document.getElementById('bookSearch').value.toLowerCase();
+        document.querySelectorAll('.book-card').forEach(c => {
+            let matches = c.dataset.title.includes(q) || c.dataset.tags.includes(q);
+            c.style.display = matches ? 'flex' : 'none';
+        });
+    }
+    function toggle3D() { document.querySelectorAll('.book-card').forEach(c => c.classList.toggle('book-3d')); }
+    
+    async function addByISBN() {
+        let isbn = prompt("Introduce el código ISBN (10 o 13 dígitos):");
+        if(!isbn) return;
+        try {
+            let res = await fetch(`https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&format=json&jscmd=data`);
+            let data = await res.json();
+            let key = `ISBN:${isbn}`;
+            if(data[key]) {
+                let book = data[key];
+                let title = book.title; let cover = book.cover ? book.cover.medium : 'https://placehold.co/300x450?text=Sin+Portada';
+                let html = `<div class="book-card" data-title="${title.toLowerCase()}" data-tags="nuevo"><img src="${cover}" class="book-cover"><h3 class="book-title">${title}</h3><div class="tags-wrapper"><span class="tag">ISBN</span></div></div>`;
+                document.getElementById('bookGrid').insertAdjacentHTML('afterbegin', html);
+                addXP(15); updateChart();
+            } else { alert("Libro no encontrado."); }
+        } catch(e) { alert("Error de conexión."); }
+    }
+
+    function citaCiega() { alert("Te sugerimos explorar: " + ['Poesía Contemporánea', 'Filosofía Clásica', 'Novela Negra', 'Divulgación Científica'][Math.floor(Math.random()*4)]); }
+
+    function leerLibro(genero) {
+        let p = document.getElementById('bgPlayer');
+        let urls = { 'misterio': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', 'terror': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3', 'scifi': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3' };
+        if(urls[genero]) { p.src = urls[genero]; p.play().catch(()=>{}); alert(`Ambiente sonoro para '${genero}' activado.`); }
+        else { alert("Excelente elección. Modo de lectura iniciado."); }
+    }
+
+    // Gráfico de Barras Moderno
+    function updateChart() {
+        let tags = []; document.querySelectorAll('.book-card .tag').forEach(t => tags.push(t.innerText.toUpperCase()));
+        let counts = {}; tags.forEach(t => counts[t] = (counts[t]||0)+1);
+        let total = tags.length || 1; 
+        // Paleta moderna para el gráfico
+        let colors = ['#4f46e5', '#10b981', '#f59e0b', '#ec4899', '#06b6d4', '#8b5cf6'];
+        let html = ''; let leg = ''; let i = 0;
+        for(let key in counts) {
+            if(key === 'ISBN') continue;
+            let w = (counts[key]/total)*100; let c = colors[i%colors.length];
+            html += `<div class="chart-bar" style="width:${w}%; background:${c};" title="${key}: ${counts[key]}"></div>`;
+            leg += `<span style="color:${c};">■ ${key} (${counts[key]})</span>`; i++;
+        }
+        document.getElementById('genreChart').innerHTML = html || '<div class="chart-bar" style="width:100%; background:var(--border);">Sin datos</div>';
+        document.getElementById('genreLegend').innerHTML = leg;
+    }
+
+    // Comunidad
+    function generarRecomendacion() {
+        let recs = ["'Fundación' de Isaac Asimov", "'El Resplandor' de Stephen King", "'La Sombra del Viento' de Zafón", "'El Señor de los Anillos' de Tolkien"];
+        let r = recs[Math.floor(Math.random()*recs.length)];
+        let d = document.getElementById('aiRec'); d.innerText = "Analizando base de datos...";
+        setTimeout(() => { d.innerText = `Sugerencia algorítmica: ${r}`; }, 1200);
+    }
+
+    function iniciarDuelo() {
+        let f = document.getElementById('duelFriend').value; let b = document.getElementById('duelBook').value;
+        if(f&&b) { document.getElementById('duelStatus').innerText = `Desafío enviado a ${f} para leer '${b}'.`; }
+    }
+
+    function enviarChat() {
+        let m = document.getElementById('chatMsg').value;
+        if(m) {
+            let cb = document.getElementById('chatBox');
+            cb.innerHTML += `<div class="msg me">${m}</div>`;
+            document.getElementById('chatMsg').value = ''; cb.scrollTop = cb.scrollHeight;
+            setTimeout(() => { cb.innerHTML += `<div class="msg other">Interesante perspectiva. Estoy de acuerdo contigo.</div>`; cb.scrollTop = cb.scrollHeight; }, 1500);
+        }
+    }
+
+    // Utilidades
+    function toggleZen() { document.body.classList.toggle('zen-mode'); }
+    function closeModals() { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); document.getElementById('overlay').style.display='none'; }
+    
+    let pTime = 1500; let pInt; let pRun = false;
+    function startPomo() {
+        let btn = document.getElementById('btnPomoStart');
+        if(pRun) { clearInterval(pInt); pRun=false; btn.innerText="Reanudar"; btn.classList.add('outline'); return; }
+        pRun = true; btn.innerText="Pausar"; btn.classList.remove('outline');
+        pInt = setInterval(() => {
+            if(pTime>0) { pTime--; let m=Math.floor(pTime/60); let s=pTime%60; document.getElementById('pomoTime').innerText=`${m<10?'0'+m:m}:${s<10?'0'+s:s}`; }
+            else { clearInterval(pInt); pRun=false; closeModals(); alert("Sesión terminada."); pTime=1500; addXP(20); btn.innerText="Iniciar Sesión"; btn.classList.remove('outline'); }
+        }, 1000);
+    }
+</script>
+</body>
+</html>
